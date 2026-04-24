@@ -1,1 +1,1 @@
-Im lazy to make smth here rn sorry
+Im write smth here rn sorry, readme gonna be better later

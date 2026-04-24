@@ -4,8 +4,7 @@ EModule.WS = game:GetService("Workspace")
 
 EModule.Config = {
     RenderSettings = {
-        Type = "Regular", -- Regular/Better/RunService
-        FrameUpdate = 144 -- Edit only if u use better type
+        Type = "Regular" -- Regular/RunService
     },
     TextFont = Drawing.Fonts.SystemBold,
     DefColor = Color3.new(1,1,1),
@@ -63,7 +62,7 @@ function EModule:DeleteESP(types, link)
 end
 
 function EModule:CreateRenderFlow()
-    if self.Config.RenderSettings.Type:lower() == "regular" or self.Config.RenderSettings.Type:lower() == "better" then
+    if self.Config.RenderSettings.Type:lower() == "regular" then
         task.spawn(function()
             if not EModule.Act then EModule.Act = true end
             EModule.Btr = os.clock()
@@ -81,14 +80,7 @@ function EModule:CreateRenderFlow()
                         typee.ESP.Visible = false
                     end
                 end
-                if self.Config.RenderSettings.Type:lower() == "better" then
-                    if os.clock() - EModule.Btr >= 1/self.Config.RenderSettings.FrameUpdate then
-                        task.wait()
-                        EModule.Btr = os.clock()
-                    end
-                else
-                    task.wait()
-                end
+                task.wait()
             end
         end)
     elseif self.Config.RenderSettings.Type:lower() == "runservice" then

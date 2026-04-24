@@ -79,6 +79,8 @@ function EModule:Finish()
         if Type.Type then Type.Type = nil end
         self.CActive[addr] = nil
     end
+    self.CActive = {}
 end
 
+_G.EModule = EModule
 return EModule

@@ -69,7 +69,7 @@ function EModule:CreateRenderFlow()
             while self.Act do
                 for addressniha, typee in pairs(self.CActive) do
                     if not typee or not typee.Instance or not typee.Instance:IsDescendantOf(self.WS) then
-                        self:DESP("M",addressniha)
+                        self:DeleteESP("M",addressniha)
                         continue
                     end
                     local Vis, St = WorldToScreen(typee.Instance.Position)
@@ -89,7 +89,7 @@ function EModule:CreateRenderFlow()
             self.RS = game:GetService("RunService").RenderStepped:Connect(function()
                 for addressniha, typee in pairs(self.CActive) do
                     if not typee or not typee.Instance or not typee.Instance:IsDescendantOf(self.WS) then
-                        self:DESP("M",addressniha)
+                        self:DeleteESP("M",addressniha)
                         continue
                     end
                     local Vis, St = WorldToScreen(typee.Instance.Position)

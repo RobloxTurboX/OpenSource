@@ -6,10 +6,20 @@ EModule.Config = {
     RenderSettings = {
         Type = "Regular" -- Regular/RunService
     },
-    TextFont = Drawing.Fonts.SystemBold,
-    DefColor = Color3.new(1,1,1),
-    DefText = "SmthShit"
-
+    Text = {
+        TextFont = Drawing.Fonts.SystemBold,
+        DefColor = Color3.new(1,1,1),
+        DefText = "SmthShit",
+        ZIndex = -9e9
+        Offsets = {
+            WorldOffsetPos = Vector2.new(0,0),
+            ScreenOffsetPos = Vector2.new(0,0)
+        }
+    },
+    Box = {
+        Size2D = Vector2.new(30,30),
+        Size3D = Vector3.new(30,30,30)
+    }
 }
 
 EModule.Act = false
@@ -21,9 +31,10 @@ function EModule:CreateESP(obj,text,color,type)
     NotText.Outline = true
     NotText.Center = true
     NotText.Visible = true
-    NotText.Color = color or self.Config.DefColor
-    NotText.Text = text or self.Config.DefText
-    NotText.Font = self.Config.TextFont
+    NotText.Color = color or self.Config.Text.DefColor
+    NotText.Text = text or self.Config.Text.DefText
+    NotText.Font = self.Config.Text.TextFont
+    NotText.ZIndex = self.Config.Text.ZIndex
     self.CActive[obj.Address] = {
         Instance = obj,
         Type = type or "Default",
@@ -62,44 +73,38 @@ function EModule:DeleteESP(types, link)
 end
 
 function EModule:CreateRenderFlow()
+    local function Render()
+        if not EModule.Act then EModule.Act = true end
+        for addressniha, typee in pairs(self.CActive) do
+            if not typee or not typee.Instance or not typee.Instance:IsDescendantOf(self.WS) then
+                self:DeleteESP("M",addressniha)
+                continue
+            end
+            local PosOnScreen = typee.Instance.Position
+            if not PosOnScreen or PosOnScreen == nil then 
+                self:DeleteESP("M",addressniha)
+                continue
+            end
+            local Vis, St = WorldToScreen(PosOnScreen)
+            if St then
+                typee.ESP.Visible = true
+                typee.ESP.Position = Vis
+            else
+                typee.ESP.Visible = false
+            end
+        end
+    end
     if self.Config.RenderSettings.Type:lower() == "regular" then
         task.spawn(function()
-            if not EModule.Act then EModule.Act = true end
-            EModule.Btr = os.clock()
             while self.Act do
-                for addressniha, typee in pairs(self.CActive) do
-                    if not typee or not typee.Instance or not typee.Instance:IsDescendantOf(self.WS) then
-                        self:DeleteESP("M",addressniha)
-                        continue
-                    end
-                    local Vis, St = WorldToScreen(typee.Instance.Position)
-                    if St then
-                        typee.ESP.Visible = true
-                        typee.ESP.Position = Vis
-                    else
-                        typee.ESP.Visible = false
-                    end
-                end
+                Render()
                 task.wait()
             end
         end)
     elseif self.Config.RenderSettings.Type:lower() == "runservice" then
         task.spawn(function()
-            if not EModule.Act then EModule.Act = true end
             self.RS = game:GetService("RunService").RenderStepped:Connect(function()
-                for addressniha, typee in pairs(self.CActive) do
-                    if not typee or not typee.Instance or not typee.Instance:IsDescendantOf(self.WS) then
-                        self:DeleteESP("M",addressniha)
-                        continue
-                    end
-                    local Vis, St = WorldToScreen(typee.Instance.Position)
-                    if St then
-                        typee.ESP.Visible = true
-                        typee.ESP.Position = Vis
-                    else
-                        typee.ESP.Visible = false
-                    end
-                end
+                Render()
             end)
         end)
     end

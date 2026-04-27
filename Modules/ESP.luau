@@ -73,8 +73,8 @@ function EModule:DeleteESP(types, link)
 end
 
 function EModule:CreateRenderFlow()
+    if not self.Act then self.Act = true end
     local function Render()
-        if not self.Act then self.Act = true end
         for addressniha, typee in pairs(self.CActive) do
             if not typee or not typee.Instance or not typee.Instance:IsDescendantOf(self.WS) then
                 self:DeleteESP("M",addressniha)
